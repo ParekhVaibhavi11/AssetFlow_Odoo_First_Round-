@@ -1,93 +1,63 @@
-/**
- * context/AuthContext.jsx
- *
- * Global authentication state management.
- * Provides: user, token, login, logout, isAuthenticated, isLoading
- *
- * Persists token and user to localStorage for session survival on refresh.
- */
+import React, { createContext, useState, useEffect } from 'react';
+import { fetchApi } from '../utils/api';
 
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import api from '../api/axios';
-
-const AuthContext = createContext(null);
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser]         = useState(null);
-  const [token, setToken]       = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // True while restoring session
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [loading, setLoading] = useState(true);
 
-  // ── Restore session from localStorage on mount ────────────
   useEffect(() => {
-    const storedToken = localStorage.getItem('af_token');
-    const storedUser  = localStorage.getItem('af_user');
-
-    if (storedToken && storedUser) {
-      try {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
-      } catch {
-        // Corrupted data — clear it
-        localStorage.removeItem('af_token');
-        localStorage.removeItem('af_user');
+    const loadUser = async () => {
+      if (!token) {
+        setLoading(false);
+        return;
       }
-    }
-    setIsLoading(false);
-  }, []);
 
-  /**
-   * Login — store token and user in state and localStorage.
-   * @param {string} newToken
-   * @param {object} newUser
-   */
-  const login = useCallback((newToken, newUser) => {
-    localStorage.setItem('af_token', newToken);
-    localStorage.setItem('af_user', JSON.stringify(newUser));
-    setToken(newToken);
-    setUser(newUser);
-  }, []);
+      try {
+        const userData = await fetchApi('/auth/me');
+        setUser(userData);
+      } catch (error) {
+        console.error('Session validation failed:', error.message);
+        // Clear corrupt or expired session
+        logout();
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  /**
-   * Logout — clear all auth state.
-   */
-  const logout = useCallback(async () => {
-    localStorage.removeItem('af_token');
-    localStorage.removeItem('af_user');
-    setToken(null);
-    setUser(null);
-  }, []);
+    loadUser();
+  }, [token]);
 
-  /**
-   * Update user in state + localStorage (e.g., after password change).
-   * @param {object} updatedUser
-   */
-  const updateUser = useCallback((updatedUser) => {
-    const merged = { ...user, ...updatedUser };
-    localStorage.setItem('af_user', JSON.stringify(merged));
-    setUser(merged);
-  }, [user]);
-
-  const value = {
-    user,
-    token,
-    isLoading,
-    isAuthenticated: !!token && !!user,
-    login,
-    logout,
-    updateUser,
+  const login = async (email, password) => {
+    const data = await fetchApi('/auth/login', {
+      method: 'POST',
+      body: { email, password },
+    });
+    
+    localStorage.setItem('token', data.token);
+    setToken(data.token);
+    setUser(data.user);
+    return data.user;
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
+  const signup = async (name, email, password, department_id) => {
+    return await fetchApi('/auth/signup', {
+      method: 'POST',
+      body: { name, email, password, department_id },
+    });
+  };
 
-/**
- * useAuth hook — consume auth context anywhere.
- * Throws if used outside AuthProvider.
- */
-export const useAuth = () => {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within an AuthProvider');
-  return ctx;
-};
+  const logout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+    setUser(null);
+  };
 
-export default AuthContext;
+  return (
+    <AuthContext.Provider value={{ user, token, loading, login, signup, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
