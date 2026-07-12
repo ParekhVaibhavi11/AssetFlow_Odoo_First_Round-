@@ -1,25 +1,4 @@
 /**
- * utils/response.js
- *
- * Consistent JSON response helpers.
- * Every controller uses these — never build raw res.json() objects.
- *
- * Success shape:
- * {
- *   success: true,
- *   message: "...",
- *   data: { ... }
- * }
- *
- * Error shape:
- * {
- *   success: false,
- *   message: "...",
- *   error: "..." | null
- * }
- */
-
-/**
  * Send a successful JSON response.
  * @param {import('express').Response} res
  * @param {number} statusCode - HTTP status (200, 201, etc.)

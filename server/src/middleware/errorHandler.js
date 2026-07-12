@@ -1,19 +1,3 @@
-/**
- * middleware/errorHandler.js
- *
- * Global error handling middleware.
- * Must be mounted LAST in app.js after all routes.
- *
- * Handles:
- * - Prisma known request errors (P2002 unique constraint, P2025 not found, etc.)
- * - Zod validation errors (formatted nicely)
- * - JWT errors
- * - Custom AppError instances
- * - Generic unhandled errors
- *
- * NEVER expose stack traces in production responses.
- */
-
 const { ZodError } = require('zod');
 const { Prisma } = require('@prisma/client');
 const { sendError } = require('../utils/response');
