@@ -21,7 +21,7 @@ AssetFlow is a full-stack ERP application built during an 8-hour hackathon. It h
 ### Frontend
 - React.js
 - Vite
-- Tailwind CSS
+- Venila CSS
 - React Router DOM
 - Axios
 
