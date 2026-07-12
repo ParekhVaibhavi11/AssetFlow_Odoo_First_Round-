@@ -46,7 +46,7 @@ const errorHandler = (err, req, res, next) => {
     if (err.code === 'P2025') {
       return sendError(res, 404, 'Record not found', err.message);
     }
-    return sendError(res, 400, 'Database request error', isDev ? err.message : null);
+     return sendError(res, 500, 'Internal database error', isDev ? err.message : null);
   }
 
   // ── Prisma Validation Error ──────────────────────────────────
