@@ -17,10 +17,16 @@ app.use(express.json());
 
 // Mount API routes
 app.use('/api/auth', require('./routes/auth'));
-
+app.use('/api/org', require('./routes/org'));
 app.use('/api/assets', require('./routes/assets'));
-
+app.use('/api/allocations', require('./routes/allocations'));
+app.use('/api/bookings', require('./routes/bookings'));
+app.use('/api/maintenance', require('./routes/maintenance'));
+app.use('/api/audits', require('./routes/audits'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/analytics', require('./routes/analytics'));
+app.use('/api/notifications', require('./routes/notifications'));
+
 
 // 1. Database Connection & System Health Check Route
 app.get('/api/health', async (req, res) => {
