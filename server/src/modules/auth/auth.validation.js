@@ -1,10 +1,3 @@
-/**
- * modules/auth/auth.validation.js
- *
- * Zod schemas for all auth endpoints.
- * These are passed to the validate() middleware — never imported in controllers.
- */
-
 const { z } = require('zod');
 
 // ─────────────────────────────────────────────────────────────
@@ -48,6 +41,27 @@ const loginSchema = z.object({
     .min(1, 'Password cannot be empty'),
 });
 
+// ─────────────────────────────────────────────────────────────
+// POST /auth/change-password — First login password change
+// ─────────────────────────────────────────────────────────────
 
+const changePasswordSchema = z
+  .object({
+    oldPassword: z
+      .string({ required_error: 'Old password is required' })
+      .min(1, 'Old password cannot be empty'),
+    newPassword: strongPassword,
+    confirmPassword: z
+      .string({ required_error: 'Confirm password is required' })
+      .min(1, 'Confirm password cannot be empty'),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: 'New password and confirm password do not match',
+    path: ['confirmPassword'],
+  })
+  .refine((data) => data.oldPassword !== data.newPassword, {
+    message: 'New password must be different from old password',
+    path: ['newPassword'],
+  });
 
-module.exports = { registerSchema, loginSchema };
+module.exports = { registerSchema, loginSchema, changePasswordSchema };

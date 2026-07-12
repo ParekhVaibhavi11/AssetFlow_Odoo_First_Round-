@@ -1,15 +1,3 @@
-/**
- * modules/auth/auth.service.js
- *
- * Business logic layer for authentication.
- * All rules, validations, bcrypt, and JWT operations live here.
- *
- * Rules:
- * - Services call repositories (never Prisma directly)
- * - Services throw AppError for expected business failures
- * - Services never touch req/res objects
- */
-
 const bcrypt = require('bcrypt');
 const authRepository = require('./auth.repository');
 const { signToken } = require('../../config/jwt');

@@ -1,17 +1,12 @@
-/**
- * modules/user/user.service.js
- *
- * Business logic for user management operations.
- * Only admins can create/view employees (enforced by route middleware).
- */
-
-const bcrypt = require('bcrypt');
-const userRepository = require('./user.repository');
-const { AppError } = require('../../middleware/errorHandler');
+const bcrypt = require('bcrypt');   
+const userRepository = require('./user.repository'); 
+const { AppError } = require('../../middleware/errorHandler'); 
 
 const SALT_ROUNDS = 10;
 
+
 const userService = {
+
   /**
    * Create a new employee account.
    *
@@ -22,19 +17,23 @@ const userService = {
    * - temporaryPassword is hashed with bcrypt before storage
    *
    * @param {{ name, email, department, temporaryPassword, phone? }} data
-   * @returns {{ employee: object }}
+   * @returns {{ employee: object }} 
    */
-  createEmployee: async ({ name, email, department, temporaryPassword, phone }) => {
+  createEmployee: async ({ name, email, department, temporaryPassword, phone }) => { 
     // ── Check email uniqueness ────────────────────────────────────
     const existing = await userRepository.findByEmail(email);
+
     if (existing) {
       throw new AppError(`An account with email "${email}" already exists`, 409);
     }
 
+
     // ── Hash temporary password ───────────────────────────────────
     const hashedPassword = await bcrypt.hash(temporaryPassword, SALT_ROUNDS);
 
+
     // ── Create employee — role & isFirstLogin are hardcoded ───────
+    
     const employee = await userRepository.createEmployee({
       name,
       email,
@@ -46,7 +45,7 @@ const userService = {
     });
 
     return { employee };
-  },
+  }, 
 
   /**
    * List all users in the system.
@@ -57,7 +56,7 @@ const userService = {
   getAllUsers: async () => {
     const users = await userRepository.findAll();
     return { users, total: users.length };
-  },
+  }, 
 
   /**
    * Get a single user by ID.
@@ -65,13 +64,13 @@ const userService = {
    * @param {string} id - UUID
    * @returns {{ user: object }}
    */
-  getUserById: async (id) => {
-    const user = await userRepository.findById(id);
-    if (!user) {
-      throw new AppError('User not found', 404);
-    }
-    return { user };
-  },
-};
+  getUserById: async (id) => { 
+    const user = await userRepository.findById(id); 
+    if (!user) { 
+      throw new AppError('User not found', 404); 
+    } 
+    return { user }; 
+  }, 
+}; 
 
 module.exports = userService;

@@ -1,10 +1,3 @@
-/**
- * modules/user/user.repository.js
- *
- * Data access layer for user management.
- * Contains ONLY Prisma queries — no business logic.
- */
-
 const prisma = require('../../config/prisma');
 
 // Fields that are safe to return (never include password)

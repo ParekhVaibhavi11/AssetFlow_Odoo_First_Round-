@@ -10,7 +10,7 @@ const userController = require('./user.controller');
 const authenticate = require('../../middleware/authenticate');
 const authorize = require('../../middleware/authorize');
 const validate = require('../../middleware/validate');
-const { createEmployeeSchema } = require('./user.validation');
+const { createEmployeeSchema } =  require('./user.validation');
 const { ROLES } = require('../../constants/roles');
 
 const router = Router();
@@ -35,22 +35,23 @@ router.post(
  * GET /users
  * Admin gets all users.
  */
-router.get(
+
+router.get( 
   '/',
   authenticate,
   authorize(ROLES.ADMIN),
-  userController.list
+  userController.list 
 );
 
 /**
  * GET /users/:id
  * Admin gets a specific user.
  */
-router.get(
-  '/:id',
-  authenticate,
-  authorize(ROLES.ADMIN),
-  userController.getById
-);
+router.get( 
+  '/:id',   
+  authenticate, 
+  authorize(ROLES.ADMIN), 
+  userController.getById 
+); 
 
 module.exports = router;

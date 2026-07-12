@@ -14,7 +14,7 @@ const express = require('express');
 const cors = require('cors');
 
 const authRoutes = require('./modules/auth/auth.routes');
-const userRoutes = require('./modules/user/user.routes');
+const userRoutes = require('./modules/user/user.routes'); 
 const { errorHandler } = require('./middleware/errorHandler');
 const { sendError } = require('./utils/response');
 
