@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -5,4 +8,37 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────────────────────
+
+/// Roles in AssetFlow — ONLY two allowed. No other roles.
+enum Role {
+  ADMIN
+  EMPLOYEE
+}
+
+// ─────────────────────────────────────────────────────────────
+// MODELS
+// ─────────────────────────────────────────────────────────────
+
+/// Core user identity table.
+/// Admins are created via /auth/register (one-time).
+/// Employees are created by Admin via POST /users.
+model User {
+  id           String   @id @default(uuid())        // UUID PK — non-sequential, tamper-safe
+  name         String                                // Full display name
+  email        String   @unique                      // Login email — enforced unique at DB level
+  password     String                                // bcrypt hash — NEVER store plain text
+  role         Role     @default(EMPLOYEE)           // ADMIN | EMPLOYEE only
+  department   String?                               // Optional: Engineering, HR, Finance...
+  phone        String?                               // Optional contact number
+  isFirstLogin Boolean  @default(true)              // true → force /change-password on first login
+  isActive     Boolean  @default(true)              // false → account suspended (soft disable)
+  createdAt    DateTime @default(now())              // Auto-set on creation
+  updatedAt    DateTime @updatedAt                   // Auto-updated by Prisma on every update
+
+  @@map("users") // PostgreSQL table name: "users" (snake_case convention)
 }
