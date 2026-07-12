@@ -1,0 +1,60 @@
+/**
+ * middleware/authenticate.js
+ *
+ * JWT Authentication middleware.
+ *
+ * Extracts the Bearer token from the Authorization header,
+ * verifies it using jwt.js config, and attaches the decoded
+ * payload to req.user for downstream middleware/controllers.
+ *
+ * req.user shape after this middleware runs:
+ * {
+ *   userId: string (UUID)
+ *   email:  string
+ *   role:   "ADMIN" | "EMPLOYEE"
+ * }
+ *
+ * Errors:
+ * - 401 if Authorization header is missing
+ * - 401 if token format is incorrect
+ * - 401 if token is invalid or expired (handled by verifyToken + errorHandler)
+ */
+
+const { verifyToken } = require('../config/jwt');
+const { sendError } = require('../utils/response');
+
+const authenticate = (req, res, next) => {
+  try {
+    // ── 1. Extract the Authorization header ──────────────────────
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+      return sendError(res, 401, 'Access denied. No token provided.');
+    }
+
+    // ── 2. Validate "Bearer <token>" format ──────────────────────
+    const parts = authHeader.split(' ');
+    if (parts.length !== 2 || parts[0] !== 'Bearer') {
+      return sendError(res, 401, 'Invalid token format. Use: Bearer <token>');
+    }
+
+    const token = parts[1];
+
+    // ── 3. Verify token (throws on invalid/expired) ───────────────
+    const decoded = verifyToken(token);
+
+    // ── 4. Attach decoded payload to req.user ─────────────────────
+    req.user = {
+      userId: decoded.userId,
+      email: decoded.email,
+      role: decoded.role,
+    };
+
+    next();
+  } catch (err) {
+    // JsonWebTokenError / TokenExpiredError → forwarded to global errorHandler
+    next(err);
+  }
+};
+
+module.exports = authenticate;
