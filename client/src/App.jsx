@@ -1,122 +1,110 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React, { useContext } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthContext, AuthProvider } from './context/AuthContext';
+import Navbar from './components/Navbar';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import Assets from './pages/Assets';
+import Allocation from './pages/Allocation';
+import Bookings from './pages/Bookings';
+import Maintenance from './pages/Maintenance';
+import Audit from './pages/Audit';
+import Reports from './pages/Reports';
+import Notifications from './pages/Notifications';
+import OrgSetup from './pages/OrgSetup';
+import Employees from './pages/Employees';
+import { LogOut } from 'lucide-react';
 
-function App() {
-  const [count, setCount] = useState(0)
+const Layout = ({ children }) => {
+  const { user, logout } = useContext(AuthContext);
+
+  // Return user initials for the profile avatar tag
+  const getInitials = (name) => {
+    if (!name) return 'FT';
+    const split = name.split(' ');
+    if (split.length > 1) return `${split[0][0]}${split[1][0]}`.toUpperCase();
+    return name.slice(0, 2).toUpperCase();
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className="app-container">
+      {/* 1. Sidebar Nav */}
+      <Navbar />
+      
+      {/* 2. Main Content Frame */}
+      <main className="main-content">
+        {/* Top profile settings headers */}
+        <div className="top-nav">
+          <div className="user-profile">
+            <div className="avatar">{getInitials(user?.name)}</div>
+            <div className="user-details">
+              <span className="user-name">
+                {user?.name || 'falguni Thakor'}
+                <span className="role-badge">{user?.role || 'Administrator'}</span>
+              </span>
+              <span className="user-email">{user?.email || 'falgunithakor987@gmail.com'}</span>
+            </div>
+          </div>
+          
+          <button className="btn-signout" onClick={logout}>
+            <LogOut size={14} />
+            <span>Sign out</span>
+          </button>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
 
-      <div className="ticks"></div>
+        {/* Dynamic page contents */}
+        {children}
+      </main>
+    </div>
+  );
+};
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+const PrivateRoute = ({ children }) => {
+  const { token, loading } = useContext(AuthContext);
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
-}
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', backgroundColor: 'var(--bg-primary)', color: 'var(--text-secondary)' }}>
+        <p>Validating authentication token...</p>
+      </div>
+    );
+  }
 
-export default App
+  return token ? <Layout>{children}</Layout> : <Navigate to="/login" />;
+};
+
+const AppRoutes = () => {
+  return (
+    <Routes>
+      {/* Public route */}
+      <Route path="/login" element={<Login />} />
+
+      {/* Secured Routes */}
+      <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+      <Route path="/assets" element={<PrivateRoute><Assets /></PrivateRoute>} />
+      <Route path="/allocation" element={<PrivateRoute><Allocation /></PrivateRoute>} />
+      <Route path="/bookings" element={<PrivateRoute><Bookings /></PrivateRoute>} />
+      <Route path="/maintenance" element={<PrivateRoute><Maintenance /></PrivateRoute>} />
+      <Route path="/audit" element={<PrivateRoute><Audit /></PrivateRoute>} />
+      <Route path="/reports" element={<PrivateRoute><Reports /></PrivateRoute>} />
+      <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
+      <Route path="/org-setup" element={<PrivateRoute><OrgSetup /></PrivateRoute>} />
+      <Route path="/employees" element={<PrivateRoute><Employees /></PrivateRoute>} />
+
+      {/* Wildcard redirect */}
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
+  );
+};
+
+const App = () => {
+  return (
+    <AuthProvider>
+      <Router>
+        <AppRoutes />
+      </Router>
+    </AuthProvider>
+  );
+};
+
+export default App;

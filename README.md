@@ -8,6 +8,12 @@ The application features a modern, responsive user interface styled with premium
 
 ## 🚀 Key Features
 
+### Frontend
+- React.js
+- Vite
+- Venila CSS
+- React Router DOM
+- Axios
 * 📊 **Live Analytics Dashboard:** Metric KPI counters, overdue checkout warnings, quick action navigation shortcuts, and chronological activity feeds.
 * 📦 **Dynamic Asset Registry:** Centralized directory supporting dynamic forms that render category-specific properties (e.g. warranty, manufacturer) stored as JSONB.
 * 🔄 **Allocation & Transfer Workflows:** Check-out assets to staff/departments, log returned condition notes, and review transfer requests. Includes conflict warnings if an asset is already checked out.
