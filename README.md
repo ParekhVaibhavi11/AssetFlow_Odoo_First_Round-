@@ -1,22 +1,12 @@
-# 🚀 AssetFlow
-### Enterprise Asset & Resource Management System
+# AssetFlow - Enterprise Asset & Resource Management System
 
-AssetFlow is a full-stack ERP application built during an 8-hour hackathon. It helps organizations manage assets, employees, departments, resource bookings, maintenance workflows, audits, and analytics from a centralized platform.
+AssetFlow is a high-fidelity, full-stack **PERN (PostgreSQL, Express, React, Node.js)** enterprise application designed to track physical assets, manage department allocations, schedule shared bookable resources, route maintenance tickets, and perform audits.
 
----
-
-## 👨‍💻 Team
-
-| Name | Responsibility |
-|------|----------------|
-| Member 1 | Authentication & Database |
-| Member 2 | Asset & Allocation Backend |
-| Member 3 | Frontend Dashboard & UI |
-| Member 4 | Booking, Maintenance & Reports |
+The application features a modern, responsive user interface styled with premium HSL color tokens, dark mode support, glassmorphic panels, and smooth micro-animations.
 
 ---
 
-# 🛠 Tech Stack
+## 🚀 Key Features
 
 ### Frontend
 - React.js
@@ -24,174 +14,143 @@ AssetFlow is a full-stack ERP application built during an 8-hour hackathon. It h
 - Venila CSS
 - React Router DOM
 - Axios
-
-### Backend
-- Node.js
-- Express.js
-
-### Database
-- PostgreSQL
-- Prisma ORM
-
-### Authentication
-- JWT
-- bcrypt
+* 📊 **Live Analytics Dashboard:** Metric KPI counters, overdue checkout warnings, quick action navigation shortcuts, and chronological activity feeds.
+* 📦 **Dynamic Asset Registry:** Centralized directory supporting dynamic forms that render category-specific properties (e.g. warranty, manufacturer) stored as JSONB.
+* 🔄 **Allocation & Transfer Workflows:** Check-out assets to staff/departments, log returned condition notes, and review transfer requests. Includes conflict warnings if an asset is already checked out.
+* 📅 **Resource Bookings:** Interactive week agendas and calendar slots for shared assets (e.g., conference rooms, vans) with automatic time-slot overlap blocking.
+* 🛠️ **Maintenance Management:** File repair requests, assign technicians, and track ticket status. Asset statuses update between `Available` ↔ `Under Maintenance` automatically.
+* 🔍 **Audit Cycles & Reconciliation:** Scoped audit launches, checklist verifications (Verified/Missing/Damaged), and reconciliation closures that set missing items to `Lost`.
+* 📈 **Reports & Analytics:** Segment utilization bars, department valuations, ticket tables, hourly booking heatmaps, and one-click CSV report exports.
+* ⚙️ **Org Settings (Admin Gates):** Hierarchical department structures, custom category attributes builders, and employee promotion directories.
+* 🔔 **Alerts & System Logs:** Personal notification inbox (read/all-read actions) and a System Audit Log trail.
 
 ---
 
-# 📂 Project Structure
+## 🛠️ Tech Stack
 
-```
+* **Frontend:** React.js, Vite, React Router, Lucide Icons, Vanilla CSS (Variables, HSL Palettes, Glassmorphism).
+* **Backend:** Node.js, Express, pg (PostgreSQL Client), JSON Web Tokens (JWT), Bcrypt.js (Password Hashing).
+* **Database:** PostgreSQL (V14+) with constraints, parent-child department foreign keys, and indexes.
+
+---
+
+## 📂 Project Structure
+
+```text
 assetflow/
-│
-├── client/
-│
-└── server/
+├── backend/
+│   ├── db/
+│   │   ├── index.js          # PostgreSQL pool connection
+│   │   ├── init.js           # Database table builder & seeder script
+│   │   ├── schema.sql        # Database tables & constraints
+│   │   └── seed.sql          # Initial mock seeder records
+│   ├── middleware/
+│   │   └── auth.js           # JWT verification & role authorization
+│   ├── routes/
+│   │   ├── auth.js           # Authentication & directory
+│   │   ├── org.js            # Departments & categories
+│   │   ├── assets.js         # Asset directory registry
+│   │   ├── allocations.js    # Checkouts, returns, transfers
+│   │   ├── bookings.js       # Resource slots schedules
+│   │   ├── maintenance.js    # Tickets & repair triggers
+│   │   ├── audits.js         # Audit lists checklists
+│   │   ├── dashboard.js      # Stats counts & activity streams
+│   │   ├── analytics.js      # Reports, valuation, heatmap data
+│   │   └── notifications.js  # Notifications & audit logs
+│   ├── .env                  # Environment config variables
+│   ├── index.js              # Express app entrypoint
+│   └── package.json
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   │   └── Navbar.jsx    # Sidebar navigation menu
+│   │   ├── context/
+│   │   │   └── AuthContext.jsx # Login/Logout validation state
+│   │   ├── pages/
+│   │   │   ├── Login.jsx
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── Assets.jsx
+│   │   │   ├── Allocation.jsx
+│   │   │   ├── Bookings.jsx
+│   │   │   ├── Maintenance.jsx
+│   │   │   ├── Audit.jsx
+│   │   │   ├── OrgSetup.jsx
+│   │   │   ├── Employees.jsx
+│   │   │   ├── Reports.jsx
+│   │   │   └── Notifications.jsx
+│   │   ├── utils/
+│   │   │   └── api.js        # API fetch wrapper
+│   │   ├── App.jsx           # Routes routing structure
+│   │   ├── index.css         # Typography, global HSL classes
+│   │   └── main.jsx
+│   ├── index.html
+│   ├── package.json
+│   └── vite.config.js
+└── README.md                 # Project documentation
 ```
 
 ---
 
-# Features
+## ⚙️ Installation & Setup
 
-## Authentication
-- Login
-- Signup
-- JWT Authentication
-- Role Based Access
-
-## Organization
-- Departments
-- Employees
-- Asset Categories
-
-## Asset Management
-- Register Assets
-- Update Asset
-- Asset Lifecycle
-- Asset History
-
-## Allocation
-- Allocate Asset
-- Return Asset
-- Transfer Request
-
-## Resource Booking
-- Calendar Booking
-- Conflict Detection
-
-## Maintenance
-- Raise Request
-- Approval Workflow
-- Resolution Tracking
-
-## Audit
-- Audit Cycle
-- Verification
-- Discrepancy Report
-
-## Dashboard
-- KPI Cards
-- Notifications
-- Reports
+### **Prerequisites**
+* [Node.js](https://nodejs.org/) (v16+)
+* [PostgreSQL](https://www.postgresql.org/) (v14+) running locally
 
 ---
 
-# User Roles
-
-### Admin
-- Manage Departments
-- Manage Employees
-- Assign Roles
-- Analytics
-
-### Asset Manager
-- Register Assets
-- Allocate Assets
-- Maintenance Approval
-
-### Department Head
-- Approve Transfers
-- Department Assets
-
-### Employee
-- Book Resources
-- Raise Maintenance
-- Return Assets
-
----
-
-# Installation
-
-## Clone Repository
-
-git clone <repository-url>
-
-cd assetflow
+### **1. Backend Database Config**
+1. Navigate to the backend folder:
+   ```bash
+   cd backend
+   ```
+2. Install server dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env` file in the `backend/` root directory and add your connection string and security details:
+   ```env
+   PORT=5000
+   DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/assetflow
+   JWT_SECRET=supersecretkey12345
+   ```
+4. Run the database initializer to create all tables and populate seed data:
+   ```bash
+   npm run db:init
+   ```
+5. Start the API server:
+   ```bash
+   npm run start
+   ```
+   The backend will start running at `http://localhost:5000`.
 
 ---
 
-## Frontend
-
-cd client
-
-npm install
-
-npm run dev
-
----
-
-## Backend
-
-cd server
-
-npm install
-
-npx prisma generate
-
-npx prisma migrate dev
-
-npm run dev
+### **2. Frontend Setup**
+1. Navigate to the frontend folder:
+   ```bash
+   cd ../frontend
+   ```
+2. Install client dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the Vite development server:
+   ```bash
+   npm run dev
+   ```
+4. Open your browser and navigate to `http://localhost:5173/`.
 
 ---
 
-# Environment Variables
+## 🔐 Credentials for Testing
 
-## Server (.env)
+Use the following seeded accounts to test different role capabilities:
 
-PORT=5000
-
-DATABASE_URL="postgresql://username:password@localhost:5432/assetflow"
-
-JWT_SECRET=your_secret_key
-
----
-
-# Git Workflow
-
-main
-
-feature/auth
-
-feature/assets
-
-feature/dashboard
-
-feature/booking
-
-feature/reports
-
----
-
-# Future Scope
-
-- QR Code Scanning
-- Email Notifications
-- Cloud Storage
-- AI Analytics
-- Mobile App
-
----
-
-# License
-
-MIT License
+| Role | Email | Password |
+| :--- | :--- | :--- |
+| **System Admin** | `admin@assetflow.com` | `password123` |
+| **Asset Manager** | `manager@assetflow.com` | `password123` |
+| **Department Head** | `ithead@assetflow.com` | `password123` |
+| **Standard Employee** | `priya@assetflow.com` | `password123` |
