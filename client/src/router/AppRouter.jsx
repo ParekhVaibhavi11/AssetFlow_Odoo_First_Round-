@@ -17,8 +17,10 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import LoginPage          from '../pages/LoginPage';
 import RegisterPage       from '../pages/RegisterPage';
-import DashboardPage      from '../pages/Dashboard';
-
+import ChangePasswordPage from '../pages/ChangePasswordPage';
+import DashboardPage      from '../pages/DashboardPage';
+import CreateEmployeePage from '../pages/CreateEmployeePage';
+import EmployeeListPage   from '../pages/EmployeeListPage';
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -30,7 +32,18 @@ const AppRouter = () => (
       <Route path="/login"    element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
-     
+      {/* Protected: any authenticated user */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/change-password" element={<ChangePasswordPage />} />
+        <Route path="/dashboard"       element={<DashboardPage />} />
+      </Route>
+
+      {/* Protected: ADMIN only */}
+      <Route element={<ProtectedRoute roles={['ADMIN']} />}>
+        <Route path="/users/create" element={<CreateEmployeePage />} />
+        <Route path="/employees"    element={<EmployeeListPage />} />
+      </Route>
+
       {/* Catch-all */}
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
