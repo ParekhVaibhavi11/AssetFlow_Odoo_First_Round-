@@ -1,25 +1,3 @@
-/**
- * middleware/authenticate.js
- *
- * JWT Authentication middleware.
- *
- * Extracts the Bearer token from the Authorization header,
- * verifies it using jwt.js config, and attaches the decoded
- * payload to req.user for downstream middleware/controllers.
- *
- * req.user shape after this middleware runs:
- * {
- *   userId: string (UUID)
- *   email:  string
- *   role:   "ADMIN" | "EMPLOYEE"
- * }
- *
- * Errors:
- * - 401 if Authorization header is missing
- * - 401 if token format is incorrect
- * - 401 if token is invalid or expired (handled by verifyToken + errorHandler)
- */
-
 const { verifyToken } = require('../config/jwt');
 const { sendError } = require('../utils/response');
 
